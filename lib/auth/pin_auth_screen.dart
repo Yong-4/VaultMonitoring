@@ -37,9 +37,7 @@ class _PinAuthScreenState extends State<PinAuthScreen> {
           .limit(1)
           .single();
 
-      if (response != null) {
-        _databasePin = response['pin'].toString();
-      }
+      _databasePin = response['pin'].toString();
     } catch (e) {
       debugPrint('Error fetching PIN: $e');
       // Fallback to default PIN if there's an error

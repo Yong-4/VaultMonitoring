@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth/pin_auth_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/switch_screen.dart';
+import 'screens/notification_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,6 +84,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _screens = [
+    HomeScreenContent(),
+    SwitchScreen(),
+    NotificationScreen()
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,40 +105,86 @@ class _HomePageState extends State<HomePage> {
         title: const Text(
           'Vault Monitoring',
           style: TextStyle(
-            fontSize: 26,
+            fontSize: 23,
             fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 2,
+        backgroundColor: const Color(0xFF181A1B),
         actions: [
           IconButton(
-            icon: const Icon(Icons.exit_to_app),
+            icon: const Icon(Icons.exit_to_app, color: Colors.white),
             onPressed: () async {
-              // Clear authentication status
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('is_authenticated', false);
-              
-              // Navigate back to auth screen
-              if (mounted) {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const PinAuthScreen()),
-                );
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: const Text("Confirm Logout"),
+                  content: const Text("Are you sure you want to logout?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text("Logout"),
+                    ),
+                  ],
+                ),
+              );
+
+              if (confirm == true) {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('is_authenticated', false);
+                if (mounted) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const PinAuthScreen()),
+                  );
+                }
               }
             },
           ),
         ],
-      ),
-      backgroundColor: Colors.grey[100],
-      body: const Center(
-        child: Text(
-          'Welcome to Homepage',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(2.0),
+          child: Container(
+            color: const Color(0xFF2DFBB2),
+            height: 2,
+            width: double.infinity,
           ),
         ),
+      ),
+      backgroundColor: const Color(0xFF181A1B),
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            height: 1,
+            color: Colors.white24,
+          ),
+          BottomNavigationBar(
+            backgroundColor: const Color(0xFF181A1B),
+            selectedItemColor: const Color(0xFF2DFBB2),
+            unselectedItemColor: Colors.grey,
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home, color: Color(0xFF2DFBB2)),
+                label: 'HOME',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.toggle_on, color: Color(0xFF2DFBB2)),
+                label: 'SWITCH',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.notifications, color: Color(0xFF2DFBB2)),
+                label: 'NOTIFICATION',
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
