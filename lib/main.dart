@@ -5,6 +5,7 @@ import 'auth/pin_auth_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/switch_screen.dart';
 import 'screens/notification_screen.dart';
+import 'screens/manu_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -87,9 +88,10 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    HomeScreenContent(),
+    HomeScreen(),
     SwitchScreen(),
-    NotificationScreen()
+    NotificationScreen(),
+    MenuScreen(), // Add this
   ];
 
   void _onItemTapped(int index) {
@@ -111,40 +113,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         backgroundColor: const Color(0xFF181A1B),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.exit_to_app, color: Colors.white),
-            onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text("Confirm Logout"),
-                  content: const Text("Are you sure you want to logout?"),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text("Cancel"),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text("Logout"),
-                    ),
-                  ],
-                ),
-              );
-
-              if (confirm == true) {
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.setBool('is_authenticated', false);
-                if (mounted) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const PinAuthScreen()),
-                  );
-                }
-              }
-            },
-          ),
-        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2.0),
           child: Container(
@@ -156,33 +124,29 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: const Color(0xFF181A1B),
       body: _screens[_selectedIndex],
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            height: 1,
-            color: Colors.white24,
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xFF181A1B),
+        selectedItemColor: const Color(0xFF2DFBB2),
+        unselectedItemColor: Colors.grey,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, color: Color(0xFF2DFBB2)),
+            label: 'HOME',
           ),
-          BottomNavigationBar(
-            backgroundColor: const Color(0xFF181A1B),
-            selectedItemColor: const Color(0xFF2DFBB2),
-            unselectedItemColor: Colors.grey,
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home, color: Color(0xFF2DFBB2)),
-                label: 'HOME',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.toggle_on, color: Color(0xFF2DFBB2)),
-                label: 'SWITCH',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.notifications, color: Color(0xFF2DFBB2)),
-                label: 'NOTIFICATION',
-              ),
-            ],
+          BottomNavigationBarItem(
+            icon: Icon(Icons.toggle_on, color: Color(0xFF2DFBB2)),
+            label: 'SWITCH',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications, color: Color(0xFF2DFBB2)),
+            label: 'NOTIFICATION',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.menu, color: Color(0xFF2DFBB2)),
+            label: 'MENU',
           ),
         ],
       ),
