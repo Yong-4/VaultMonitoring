@@ -154,7 +154,7 @@ class _PinAuthScreenState extends State<PinAuthScreen> {
                 child: ElevatedButton(
                   onPressed: _verifyPin,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2DFBB2).withOpacity(0.7),
+                    backgroundColor: const Color(0xFF2DFBB2),
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
@@ -178,6 +178,7 @@ class _PinAuthScreenState extends State<PinAuthScreen> {
     if (_databasePin == null) {
       // If we couldn't fetch the PIN, fetch it again
       await _fetchPinFromDatabase();
+      // ignore: prefer_conditional_assignment
       if (_databasePin == null) {
         // If still null, use a fallback PIN
         _databasePin = '1234';

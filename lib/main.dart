@@ -3,9 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth/pin_auth_screen.dart';
 import 'screens/home_screen.dart';
-import 'screens/switch_screen.dart';
 import 'screens/notification_screen.dart';
-import 'screens/manu_screen.dart';
+import 'screens/menu_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -88,10 +87,9 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    HomeScreen(),
-    SwitchScreen(),
-    NotificationScreen(),
-    MenuScreen(), // Add this
+    HomeScreen(),          
+    NotificationScreen(),  
+    MenuScreen(),        
   ];
 
   void _onItemTapped(int index) {
@@ -135,10 +133,6 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home, color: Color(0xFF2DFBB2)),
             label: 'HOME',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.toggle_on, color: Color(0xFF2DFBB2)),
-            label: 'SWITCH',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications, color: Color(0xFF2DFBB2)),
