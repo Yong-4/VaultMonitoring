@@ -103,7 +103,7 @@ class _MenuScreenState extends State<MenuScreen> {
               const SizedBox(height: 16),
               // Toggle card for system monitoring
               buildSwitchCard(
-                title: 'Monitoring Door',
+                title: 'System State Control',
                 subtitle: monitoringDoor ? 'ON' : 'OFF',
                 value: monitoringDoor,
                 onChanged: (val) => _updateSystemState(val),
