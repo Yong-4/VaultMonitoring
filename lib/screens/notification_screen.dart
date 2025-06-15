@@ -12,7 +12,7 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  List<Map<String, dynamic>> notifications = [];
+  List<Map<String, dynamic>> notifications = [];  
   bool isLoading = true;
   Timer? _timer;
   

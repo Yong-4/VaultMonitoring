@@ -5,6 +5,7 @@ import 'auth/pin_auth_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/notification_screen.dart';
 import 'screens/menu_screen.dart';
+import 'services/alert_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,12 +17,17 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  // Remove const constructor
+  MyApp({super.key});
+
+  // Keep the AlertService instance
+  final AlertService _alertService = AlertService();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Vault Monitoring',
+      navigatorKey: _alertService.navigatorKey, // Use the navigator key
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,

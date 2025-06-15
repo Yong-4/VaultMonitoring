@@ -12,6 +12,8 @@ class AlertService {
   final Queue<Map<String, dynamic>> _pendingAlerts = Queue<Map<String, dynamic>>();
   bool _isAlertShowing = false;
   final AudioPlayer _audioPlayer = AudioPlayer();
+  // Global navigator key to get valid context
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   
   void showAlert(BuildContext context, String title, String message, Color color) {
     // Add to queue
@@ -19,15 +21,16 @@ class AlertService {
       'title': title,
       'message': message,
       'color': color,
+      'context': context,  // Store the context with the alert
     });
     
     // If no alert is showing, show the next one
     if (!_isAlertShowing) {
-      _showNextAlert(context);
+      _showNextAlert();
     }
   }
   
-  void _showNextAlert(BuildContext context) {
+  void _showNextAlert() {
     if (_pendingAlerts.isEmpty) {
       _isAlertShowing = false;
       return;
@@ -37,63 +40,82 @@ class AlertService {
     final alert = _pendingAlerts.removeFirst();
     _playAlertSound();
     
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: alert['color'],
-          title: Text(
-            alert['title'],
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          content: Text(
-            alert['message'],
-            style: const TextStyle(color: Colors.white),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Okay', style: TextStyle(color: Colors.white)),
-              onPressed: () {
-                _audioPlayer.stop();
-                Navigator.of(context).pop();
-                
-                // Show the count of remaining alerts if any
-                if (_pendingAlerts.isNotEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('${_pendingAlerts.length} more alerts pending'),
-                      backgroundColor: Colors.orange[700],
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                }
-                
-                // Check for next alert after a short delay
-                Future.delayed(const Duration(milliseconds: 300), () {
-                  _showNextAlert(context);
-                });
-              },
+    // Get the context from the alert or use navigator key's context
+    final BuildContext context = alert['context'] ?? navigatorKey.currentContext!;
+    
+    // Check if context is valid
+    if ((navigatorKey.currentContext != null || context.mounted)) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            backgroundColor: alert['color'],
+            title: Text(
+              alert['title'],
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
-          ],
-        );
-      },
-    ).then((_) {
-      // If dialog dismissed another way
-      _audioPlayer.stop();
-      
-      // Check for next alert after a short delay
-      Future.delayed(const Duration(milliseconds: 300), () {
-        _showNextAlert(context);
+            content: Text(
+              alert['message'],
+              style: const TextStyle(color: Colors.white),
+            ),
+            actions: [
+              TextButton(
+                child: const Text('Okay', style: TextStyle(color: Colors.white)),
+                onPressed: () {
+                  _audioPlayer.stop();
+                  Navigator.of(dialogContext).pop();
+                  
+                  // Show the count of remaining alerts if any
+                  if (_pendingAlerts.isNotEmpty) {
+                    try {
+                      ScaffoldMessenger.of(dialogContext).showSnackBar(
+                        SnackBar(
+                          content: Text('${_pendingAlerts.length} more alerts pending'),
+                          backgroundColor: Colors.orange[700],
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    } catch (e) {
+                      debugPrint('Error showing snackbar: $e');
+                    }
+                  }
+                  
+                  // Check for next alert after a short delay
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    _showNextAlert();
+                  });
+                },
+              ),
+            ],
+          );
+        },
+      ).then((_) {
+        // If dialog dismissed another way
+        _audioPlayer.stop();
+        
+        // Check for next alert after a short delay
+        Future.delayed(const Duration(milliseconds: 300), () {
+          _showNextAlert();
+        });
       });
-    });
+    } else {
+      // Context is not valid, move to next alert
+      debugPrint('Alert skipped due to invalid context');
+      _isAlertShowing = false;
+      if (_pendingAlerts.isNotEmpty) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          _showNextAlert();
+        });
+      }
+    }
   }
   
   Future<void> _playAlertSound() async {
     try {
       debugPrint('Attempting to play sound...');
       // Reset player state first
-      await _audioPlayer.stop();
+      await _audioPlayer.stop();  
       
       // Try with explicit volume and source
       await _audioPlayer.setVolume(1.0);
