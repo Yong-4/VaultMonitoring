@@ -26,10 +26,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Vault Monitoring',
-      navigatorKey: _alertService.navigatorKey, // Use the navigator key
+      title: 'VaulTech',
+      navigatorKey: _alertService.navigatorKey,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: const Color(0xFFFFFFFF),
+        scaffoldBackgroundColor: const Color(0xFF133052),
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          primary: const Color(0xFFFFFFFF),
+          secondary: const Color(0xFF4B79A6),
+          tertiary: const Color(0xFF133052),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF133052),
+          titleTextStyle: TextStyle(color: Color(0xFFFFFFFF)),
+        ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const AuthCheckScreen(),
@@ -109,43 +119,46 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Vault Monitoring',
+          'VaulTech',
           style: TextStyle(
             fontSize: 23,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Color(0xFFFFFFFF),
           ),
         ),
-        backgroundColor: const Color(0xFF181A1B),
+        backgroundColor: const Color(0xFF133052),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(2.0),
           child: Container(
-            color: const Color(0xFF2DFBB2),
+            color: const Color(0xFF4B79A6),
             height: 2,
             width: double.infinity,
           ),
         ),
       ),
-      backgroundColor: const Color(0xFF181A1B),
+      backgroundColor: const Color(0xFF133052),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF181A1B),
-        selectedItemColor: const Color(0xFF2DFBB2),
-        unselectedItemColor: Colors.grey,
+        backgroundColor: const Color(0xFF133052),
+        selectedItemColor: const Color(0xFFDDA853),
+        unselectedItemColor: const Color(0xFFFFFFFF),
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Color(0xFF2DFBB2)),
+            icon: Icon(Icons.home, color: Color(0xFF4B79A6)),
+            activeIcon: Icon(Icons.home, color: Color(0xFFDDA853)),
             label: 'HOME',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications, color: Color(0xFF2DFBB2)),
+            icon: Icon(Icons.notifications, color: Color(0xFF4B79A6)),
+            activeIcon: Icon(Icons.notifications, color: Color(0xFFDDA853)),
             label: 'NOTIFICATION',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.menu, color: Color(0xFF2DFBB2)),
+            icon: Icon(Icons.menu, color: Color(0xFF4B79A6)),
+            activeIcon: Icon(Icons.menu, color: Color(0xFFDDA853)),
             label: 'MENU',
           ),
         ],

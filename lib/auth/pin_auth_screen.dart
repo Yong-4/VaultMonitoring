@@ -14,6 +14,7 @@ class _PinAuthScreenState extends State<PinAuthScreen> {
   final TextEditingController _pinController = TextEditingController();
   bool _isError = false;
   bool _obscureText = true;
+  // ignore: unused_field
   bool _isLoading = false;
   final _client = Supabase.instance.client;
   String? _databasePin;
@@ -53,121 +54,145 @@ class _PinAuthScreenState extends State<PinAuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        backgroundColor: const Color(0xFF181A1B),
-        body: const Center(
-          child: CircularProgressIndicator(
-            color: Color(0xFF2DFBB2),
+    return Scaffold(
+      backgroundColor: const Color(0xFF133052),
+      appBar: AppBar(
+        title: const Text(
+          'Login',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+            color: Color(0xFFFFFFFF),
           ),
         ),
-      );
-    }
-    
-    return Scaffold(
-      backgroundColor: const Color(0xFF181A1B), 
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Vault Icon
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF2DFBB2), width: 2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.lock,
-                  size: 60,
-                  color: Color(0xFF2DFBB2),
-                ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFF133052),
+        elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(2.0),
+          child: Container(
+            color: const Color(0xFF4B79A6),
+            height: 2.0,
+          ),
+        ),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.95, // 95% of screen width
+            child: Card(
+              margin: const EdgeInsets.all(20),
+              color: const Color(0xFFFFFFFF),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+                side: const BorderSide(color: Color(0xFF4B79A6), width: 2),
               ),
-              const SizedBox(height: 20),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Vault Icon
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xFF4B79A6), width: 2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.lock,
+                        size: 50,
+                        color: Color(0xFF4B79A6),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
 
-              // Vault Monitoring Text
-              const Text(
-                'Vault Monitoring',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              
-              // Tagline
-              const Text(
-                'We track, we watch, we secure',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
-              ),
-              
-              const SizedBox(height: 60),
-              
-              TextField(
-                controller: _pinController,
-                keyboardType: TextInputType.number,
-                maxLength: 12,
-                obscureText: _obscureText,
-                style: const TextStyle(color: Colors.white, fontSize: 18),
-                cursorColor: const Color(0xFF2DFBB2),
-                decoration: InputDecoration(
-                  counterText: '',
-                  labelText: 'Enter PIN',
-                  labelStyle: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 16,
-                  ),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF2DFBB2), width: 2),
-                  ),
-                  errorText: _isError ? 'Wrong PIN' : null,
-                  errorStyle: const TextStyle(color: Colors.redAccent),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureText ? Icons.visibility_off : Icons.visibility,
-                      color: Colors.grey,
+                    // VaulTech Text
+                    const Text(
+                      'VaulTech',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF133052),
+                      ),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureText = !_obscureText;
-                      });
-                    },
-                  ),
-                ),
-              ),
-              
-              const SizedBox(height: 40),
-              
-              // Log in button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _verifyPin,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2DFBB2),
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
+                    
+                    // Tagline
+                    const Text(
+                      'Secure Beyond the Lock',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF4B79A6),
+                      ),
                     ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Log in',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
+                    
+                    const SizedBox(height: 40),
+                    
+                    // PIN TextField - WIDER
+                    SizedBox(
+                      width: double.infinity, // Full width within container
+                      child: TextField(
+                        controller: _pinController,
+                        keyboardType: TextInputType.number,
+                        maxLength: 12,
+                        obscureText: _obscureText,
+                        style: const TextStyle(color: Color(0xFF133052), fontSize: 18),
+                        cursorColor: const Color(0xFF4B79A6),
+                        decoration: InputDecoration(
+                          counterText: '',
+                          labelText: 'Enter PIN',
+                          labelStyle: const TextStyle(
+                            color: Color(0xFF4B79A6),
+                            fontSize: 16,
+                          ),
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFF4B79A6)),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFDDA853), width: 2),
+                          ),
+                          errorText: _isError ? 'Wrong PIN' : null,
+                          errorStyle: const TextStyle(color: Colors.redAccent),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureText ? Icons.visibility_off : Icons.visibility,
+                              color: Color(0xFF4B79A6),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureText = !_obscureText;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 40),
+                    
+                    // Log in button - WIDER
+                    SizedBox(
+                      width: double.infinity, // Full width within container
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4B79A6),
+                          foregroundColor: const Color(0xFFFFFFFF),
+                        ),
+                        onPressed: _verifyPin,
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -184,16 +209,16 @@ class _PinAuthScreenState extends State<PinAuthScreen> {
         _databasePin = '1234';
       }
     }
-    
+
     if (_pinController.text == _databasePin) {
       // Store authentication status
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('is_authenticated', true);
-      
+
       setState(() {
         _isError = false;
       });
-      
+
       // Navigate to HomePage
       if (mounted) {
         Navigator.of(context).pushReplacement(

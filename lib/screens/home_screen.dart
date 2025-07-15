@@ -11,15 +11,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String doorStatus = 'Loading...';
   IconData doorIcon = Icons.lock;
-  Color doorIconColor = Color(0xFF2DFBB2);
+  Color doorIconColor = Color(0xFF4B79A6);
 
   String intruderStatus = 'Loading...';
   IconData intruderIcon = Icons.notifications;
-  Color intruderIconColor = Color(0xFF2DFBB2);
+  Color intruderIconColor = Color(0xFF4B79A6);
 
   String itemStatus = 'Loading...';
   IconData itemIcon = Icons.verified_user;
-  Color itemIconColor = Color(0xFF2DFBB2);
+  Color itemIconColor = Color(0xFF4B79A6);
 
   String systemState = 'Loading...';
 
@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             } else {
               doorIcon = Icons.lock;
-              doorIconColor = Color(0xFF2DFBB2);
+              doorIconColor = Color(0xFF4B79A6);
             }
             
             // Update last status
@@ -123,10 +123,10 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             } else if (itemStatus == 'Item has been placed inside the vault') {
               itemIcon = Icons.check_circle_outline;
-              itemIconColor = Color(0xFF2DFBB2);
+              itemIconColor = Color(0xFF4B79A6);
             } else {
               itemIcon = Icons.verified_user;
-              itemIconColor = Color(0xFF2DFBB2);
+              itemIconColor = Color(0xFF4B79A6);
             }
             
             // Update last status
@@ -291,15 +291,15 @@ class _HomeScreenState extends State<HomeScreen> {
     // Show ON/OFF icon and color based on systemState
     final bool isOn = systemState.toUpperCase() == 'ON';
     final IconData stateIcon = isOn ? Icons.power_settings_new : Icons.power_off;
-    final Color stateIconColor = isOn ? Color(0xFF2DFBB2) : Colors.redAccent;
+    final Color stateIconColor = isOn ? Color(0xFFDDA853) : Colors.redAccent;
 
     return Card(
-      color: const Color(0xFF181A1B),
+      color: const Color(0xFFFFFFFF),
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         side: BorderSide(
-          color: stateIconColor,
+          color: const Color(0xFF4B79A6),
           width: 2,
         ),
       ),
@@ -316,7 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -352,13 +352,13 @@ class _HomeScreenState extends State<HomeScreen> {
     required String details,
     required IconData icon,
     required Color iconColor,
-    Color borderColor = const Color(0xFF2DFBB2),
+    Color borderColor = const Color(0xFF4B79A6),
   }) {
     return Card(
-      color: const Color(0xFF181A1B),
+      color: const Color(0xFFFFFFFF),
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         side: BorderSide(
           color: borderColor,
           width: 2,
@@ -377,7 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -385,7 +385,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     details,
                     style: const TextStyle(
                       fontSize: 14,
-                      color: Colors.white70,
+                      color: Colors.black54,
                     ),
                   ),
                 ],

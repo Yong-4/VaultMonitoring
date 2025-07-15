@@ -12,7 +12,7 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  List<Map<String, dynamic>> notifications = [];  
+  List<Map<String, dynamic>> notifications = [];
   bool isLoading = true;
   Timer? _timer;
   
@@ -183,98 +183,130 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF181A1B),
+      backgroundColor: const Color(0xFF133052),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: notifications.length,
-              itemBuilder: (context, index) {
-                final notification = notifications[index];
-
-                IconData iconData = Icons.notifications;
-                Color iconColor = const Color(0xFF2DFBB2);
-
-                if (notification['sensor_type'] == 'Ultrasonic Sensor') {
-                  switch (notification['status']) {
-                    case 'very close':
-                      iconData = Icons.warning_amber_rounded;
-                      iconColor = Colors.redAccent;
-                      break;
-                    case 'nearby':
-                      iconData = Icons.warning_amber_rounded;
-                      iconColor = Colors.amber;
-                      break;
-                    case 'approaching area':
-                      iconData = Icons.warning_amber_rounded;
-                      iconColor = const Color(0xFF2DFBB2);
-                      break;
-                    case 'detected far':
-                    case 'area clear':
-                      iconData = Icons.notifications;
-                      iconColor = const Color(0xFF2DFBB2);
-                      break;
-                    default:
-                      iconData = Icons.notifications;
-                      iconColor = const Color(0xFF2DFBB2);
-                  }
-                } else if (notification['sensor_type'] == 'IR Sensor 2') {
-                  // Check placement/removal status
-                  final status = notification['status'] as String;
-                  if (status.contains('placed inside')) {
-                    iconData = Icons.add_box;
-                    iconColor = Colors.green;
-                  } else if (status.contains('removed from')) {
-                    iconData = Icons.remove_circle;
-                    iconColor = Colors.orange;
-                  } else {
-                    iconData = Icons.info;
-                    iconColor = const Color(0xFF2DFBB2);
-                  }
-                } else {
-                  // Default for IR sensor 1
-                  iconData = notification['status'] == 'Vault is open'
-                      ? Icons.lock_open
-                      : Icons.lock;
-                  iconColor = notification['status'] == 'Vault is open'
-                      ? Colors.redAccent
-                      : const Color(0xFF2DFBB2);
-                }
-
-                return Card(
-                  color: Colors.grey[850],
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: ListTile(
-                    leading: Icon(
-                      iconData,
-                      color: iconColor,
-                    ),
-                    title: Text(
-                      notification['sensor_type'] ?? '',
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      notification['status'] ?? '',
-                      style: const TextStyle(color: Colors.white70),
-                    ),
-                    trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          formatDate(notification['created_at']?.toString()),
-                          style: const TextStyle(color: Colors.white54, fontSize: 12),
-                        ),
-                        Text(
-                          formatTime(notification['created_at']?.toString()),
-                          style: const TextStyle(color: Colors.white54, fontSize: 12),
-                        ),
-                      ],
+          ? const Center(child: CircularProgressIndicator(color: Color(0xFFDDA853)))
+          : notifications.isEmpty
+              ? const Center(
+                  child: Text(
+                    'No notifications',
+                    style: TextStyle(
+                      color: Color(0xFFFFFFFF),
+                      fontSize: 16,
                     ),
                   ),
-                );
-              },
-            ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: notifications.length,
+                  itemBuilder: (context, index) {
+                    final notification = notifications[index];
+                    final sensorType = notification['sensor_type'] as String;
+                    final status = notification['status'] as String;
+                    
+                    // Set default colors - white background for all cards
+                    Color cardColor = const Color(0xFFFFFFFF);
+                    Color textColor = const Color(0xFF133052);
+                    Color borderColor = const Color(0xFF4B79A6);
+                    IconData notificationIcon = Icons.notifications;
+                    Color iconColor = const Color(0xFF4B79A6);
+                    
+                    // Change only border color and icon based on notification type
+                    if (sensorType == 'Ultrasonic Sensor') {
+                      notificationIcon = Icons.radar;
+                      
+                      if (status == 'very close') {
+                        borderColor = Colors.red;
+                        iconColor = Colors.red;
+                      } else if (status == 'nearby') {
+                        borderColor = const Color(0xFFDDA853); // Golden yellow
+                        iconColor = const Color(0xFFDDA853);
+                      }
+                    } 
+                    else if (sensorType == 'IR Sensor 1') {
+                      notificationIcon = Icons.door_front_door;
+                      
+                      if (status == 'Vault is open') {
+                        borderColor = Colors.red;
+                        iconColor = Colors.red;
+                      }
+                    } 
+                    else if (sensorType == 'IR Sensor 2') {
+                      notificationIcon = Icons.inventory;
+                      
+                      if (status.contains('removed from')) {
+                        borderColor = Colors.red;
+                        iconColor = Colors.red;
+                      } else if (status.contains('placed inside')) {
+                        borderColor = const Color(0xFF4B79A6);
+                        iconColor = const Color(0xFF4B79A6);
+                      }
+                    }
+                    
+                    // Format the timestamp
+                    String formattedTime = '';
+                    if (notification['created_at'] != null) {
+                      try {
+                        final dateTime = DateTime.parse(notification['created_at']);
+                        formattedTime = DateFormat('MMM dd, yyyy - hh:mm a').format(dateTime);
+                      } catch (e) {
+                        formattedTime = notification['created_at'];
+                      }
+                    }
+                    
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 3,
+                      ),
+                      color: cardColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(color: borderColor, width: 2),
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        leading: Icon(
+                          notificationIcon,
+                          color: iconColor,
+                          size: 36,
+                        ),
+                        title: Text(
+                          sensorType,
+                          style: TextStyle(
+                            color: textColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              status,
+                              style: TextStyle(
+                                color: textColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              formattedTime,
+                              style: TextStyle(
+                                color: textColor.withOpacity(0.7),
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
     );
   }
 }
